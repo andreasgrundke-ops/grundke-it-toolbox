@@ -1,6 +1,6 @@
 # =============================================================================
 #   Titel       : Grundke IT Toolbox
-#   Version     : 2.1.0
+#   Version     : 2.1.1
 #   Autor       : Andreas Grundke | grundke-IT.de
 #   Datum       : 2026-03-29
 #   Lizenz      : MIT License - Copyright (c) 2026 Andreas Grundke, grundke-IT.de
@@ -11,12 +11,15 @@
 #                 - Custom-Actions fuer spezielle Tools (F12-Diktieren etc.)
 #                 - Windows-Tweaks als integrierte Skriptbloecke
 #                 - PC-Aufbereitung: 12 MSP-Aufgaben fuer Rechner-Refresh
-#   Aufruf      : irm https://raw.githubusercontent.com/andreasgrundke-ops/grundke-it-toolbox/main/toolbox.ps1 | iex
+#   Aufruf      : irm https://grundke-it.de/toolbox | iex
+#                 (alternativ: irm https://raw.githubusercontent.com/andreasgrundke-ops/grundke-it-toolbox/main/toolbox.ps1 | iex)
 #   Aenderungen : 1.0.0 - Initiale Version (lokal, hartcodierte Tools)
 #                 1.2.0 - SplitContainer Layout, Status-Badges
 #                 2.0.0 - Catalog-JSON, WinGet-Integration, GIT-Tools Pfad
 #                 2.1.0 - GitHub-Veroeffentlichung, Remote-Catalog-URL gesetzt,
 #                         PC-Aufbereitung Kategorie (12 Tools), Copyright
+#                 2.1.1 - Kurzaufruf-URL auf HTTPS korrigiert (IONOS HTTP-Redirect
+#                         entfernt Pfad; grundke-it.de/toolbox → https:// notwendig)
 # =============================================================================
 
 #Requires -Version 5.1

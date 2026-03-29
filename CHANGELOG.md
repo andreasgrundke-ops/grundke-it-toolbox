@@ -5,6 +5,15 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 ---
 
+## [2.1.1] — 2026-03-29
+
+### Korrigiert
+- Kurzaufruf-URL auf `https://grundke-it.de/toolbox` korrigiert
+  (IONOS leitet `http://` → `https://` ohne Pfad weiter; explizites `https://` ist zwingend)
+- README und Header-Kommentar entsprechend aktualisiert
+
+---
+
 ## [2.1.0] — 2026-03-29
 
 ### Neu

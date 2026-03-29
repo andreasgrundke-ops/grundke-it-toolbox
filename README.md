@@ -11,10 +11,10 @@
 irm https://raw.githubusercontent.com/andreasgrundke-ops/grundke-it-toolbox/main/toolbox.ps1 | iex
 ```
 
-Oder kurz über grundke-it.de:
+Oder kurz über grundke-it.de (HTTPS erforderlich):
 
 ```powershell
-irm grundke-it.de/toolbox | iex
+irm https://grundke-it.de/toolbox | iex
 ```
 
 ---
