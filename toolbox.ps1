@@ -1,16 +1,22 @@
 # =============================================================================
 #   Titel       : Grundke IT Toolbox
-#   Version     : 2.0.0
+#   Version     : 2.1.0
 #   Autor       : Andreas Grundke | grundke-IT.de
-#   Datum       : 2026-03-23
+#   Datum       : 2026-03-29
+#   Lizenz      : MIT License - Copyright (c) 2026 Andreas Grundke, grundke-IT.de
+#   GitHub      : https://github.com/andreasgrundke-ops/grundke-it-toolbox
 #   Beschreibung: WinForms-Toolbox zur Installation und Verwaltung von Tools.
 #                 - JSON-Katalog (lokal + optional remote wie Chris Titus WinUtil)
 #                 - WinGet-basierte Installation / Deinstallation
 #                 - Custom-Actions fuer spezielle Tools (F12-Diktieren etc.)
 #                 - Windows-Tweaks als integrierte Skriptbloecke
+#                 - PC-Aufbereitung: 12 MSP-Aufgaben fuer Rechner-Refresh
+#   Aufruf      : irm https://raw.githubusercontent.com/andreasgrundke-ops/grundke-it-toolbox/main/toolbox.ps1 | iex
 #   Aenderungen : 1.0.0 - Initiale Version (lokal, hartcodierte Tools)
 #                 1.2.0 - SplitContainer Layout, Status-Badges
 #                 2.0.0 - Catalog-JSON, WinGet-Integration, GIT-Tools Pfad
+#                 2.1.0 - GitHub-Veroeffentlichung, Remote-Catalog-URL gesetzt,
+#                         PC-Aufbereitung Kategorie (12 Tools), Copyright
 # =============================================================================
 
 #Requires -Version 5.1
@@ -58,8 +64,8 @@ $FI = New-Object System.Drawing.Font("Segoe UI",  7)  # WinGet-ID klein
 # Konfiguration
 # ---------------------------------------------------------------------------
 $GIT_TOOLS_BASE = "C:\GIT-Tools"
-# Optionale Remote-Catalog-URL (GitHub raw) - leer lassen fuer rein lokalen Betrieb
-$REMOTE_CATALOG_URL = ""   # z.B. "https://raw.githubusercontent.com/grundke-it/toolbox/main/catalog.json"
+# Remote-Catalog-URL (GitHub raw) - wird automatisch geladen wenn erreichbar
+$REMOTE_CATALOG_URL = "https://raw.githubusercontent.com/andreasgrundke-ops/grundke-it-toolbox/main/catalog.json"
 $CATALOG_PATH = Join-Path $PSScriptRoot "catalog.json"
 
 # ---------------------------------------------------------------------------
