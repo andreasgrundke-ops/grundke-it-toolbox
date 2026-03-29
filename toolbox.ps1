@@ -1,6 +1,6 @@
 # =============================================================================
 #   Titel       : Grundke IT Toolbox
-#   Version     : 2.1.4
+#   Version     : 2.1.5
 #   Autor       : Andreas Grundke | grundke-IT.de
 #   Datum       : 2026-03-29
 #   Lizenz      : MIT License - Copyright (c) 2026 Andreas Grundke, grundke-IT.de
@@ -23,6 +23,8 @@
 #                 2.1.2 - Fix: $PSScriptRoot leer bei irm|iex → Join-Path Fehler behoben
 #                 2.1.3 - Fix: F12-Diktieren Action hatte gleichen PSScriptRoot-Fehler
 #                 2.1.4 - F12-Diktieren Action: GitHub-Download als Fallback wenn lokal nicht gefunden
+#                 2.1.5 - F12-Diktieren Action: vollstaendiger GitHub-Sync nach C:\GIT-Tools\F12-Diktieren\
+#                         Struktur GIT_TOOLS_BASE\<ToolName>\ als Standard fuer alle zukuenftigen Tools
 # =============================================================================
 
 #Requires -Version 5.1
@@ -224,37 +226,55 @@ foreach ($t in $catalogTools) {
     # Fuer Custom-Actions: Action-Scriptblock zur Laufzeit erzeugen
     if ($t.customAction -eq "f12-install") {
         $entry['Action'] = {
-            # Suchpfade: 1. Relativ zur Toolbox  2. GIT-Tools-Zielverzeichnis  3. Download von GitHub
-            $insSource   = if ($PSScriptRoot -ne "") { [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot "..\F12-Diktieren\installer.ps1")) } else { $null }
-            $insFallback = "$GIT_TOOLS_BASE\F12-Diktieren\installer.ps1"
-            $insUrl      = "https://raw.githubusercontent.com/andreasgrundke-ops/f12-diktieren/main/installer.ps1"
+            # ----------------------------------------------------------------
+            # F12-Diktieren: Dateien von GitHub laden → C:\GIT-Tools\F12-Diktieren\
+            # Struktur: $GIT_TOOLS_BASE\<ToolName>\ fuer alle Grundke-IT Tools
+            # ----------------------------------------------------------------
+            $toolDir   = "$GIT_TOOLS_BASE\F12-Diktieren"
+            $repoBase  = "https://raw.githubusercontent.com/andreasgrundke-ops/f12-diktieren/main"
 
-            if ($insSource -and (Test-Path $insSource)) {
-                $ins = $insSource
-            } elseif (Test-Path $insFallback) {
-                $ins = $insFallback
-            } else {
-                # Kein lokaler Installer → von GitHub laden und in Temp ausfuehren
-                Write-Log "Installer nicht lokal gefunden – lade von GitHub..." "WARN"
+            # Dateien die heruntergeladen werden sollen (kein venv/models - werden vom Installer erstellt)
+            $filesToSync = @(
+                "installer.ps1",
+                "setup.ps1",
+                "dictate_service.py",
+                "F12_Diktieren.ahk",
+                "start_diktieren.bat",
+                "version.txt"
+            )
+
+            # Zielordner anlegen falls nicht vorhanden
+            if (-not (Test-Path $toolDir)) {
+                New-Item -ItemType Directory -Path $toolDir -Force | Out-Null
+                Write-Log "Ordner erstellt: $toolDir" "OK"
+            }
+
+            # Dateien synchronisieren (immer aktuellste Version von GitHub)
+            Write-Log "Synchronisiere Dateien von GitHub..." "INFO"
+            $errors = 0
+            foreach ($file in $filesToSync) {
                 try {
-                    $tmpIns = Join-Path $env:TEMP "f12-diktieren-installer.ps1"
-                    Invoke-WebRequest -Uri $insUrl -OutFile $tmpIns -UseBasicParsing -ErrorAction Stop
-                    $ins = $tmpIns
-                    Write-Log "Installer heruntergeladen: $tmpIns" "OK"
+                    $url  = "$repoBase/$file"
+                    $dest = "$toolDir\$file"
+                    Invoke-WebRequest -Uri $url -OutFile $dest -UseBasicParsing -ErrorAction Stop
+                    Write-Log "  OK: $file" "OK"
                 } catch {
-                    Write-Log "Download fehlgeschlagen: $_" "ERR"
-                    $ins = $null
+                    Write-Log "  FEHLER: $file - $_" "ERR"
+                    $errors++
                 }
             }
 
-            if ($ins) {
-                Write-Log "Starte F12-Diktieren Installer: $ins"
-                Start-Process powershell.exe -ArgumentList "-ExecutionPolicy Bypass -File `"$ins`"" -Wait
-                Update-WingetCache
-                Write-Log "F12-Diktieren Installer abgeschlossen." "OK"
-            } else {
-                Write-Log "installer.ps1 nicht gefunden und Download fehlgeschlagen!" "ERR"
+            if ($errors -gt 0) {
+                Write-Log "$errors Datei(en) konnten nicht geladen werden. Pruefe Internetverbindung." "ERR"
+                return
             }
+
+            # Installer ausfuehren (er erstellt venv, models-Ordner, Tasks etc.)
+            $ins = "$toolDir\installer.ps1"
+            Write-Log "Starte Installer: $ins"
+            Start-Process powershell.exe -ArgumentList "-ExecutionPolicy Bypass -File `"$ins`"" -Wait
+            Update-WingetCache
+            Write-Log "F12-Diktieren Setup abgeschlossen." "OK"
         }
     }
     # open-url und run-ps werden direkt in Install-ViaPM behandelt (kein Scriptblock noetig)
