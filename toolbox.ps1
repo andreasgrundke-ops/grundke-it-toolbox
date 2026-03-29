@@ -1,6 +1,6 @@
 # =============================================================================
 #   Titel       : Grundke IT Toolbox
-#   Version     : 2.1.3
+#   Version     : 2.1.4
 #   Autor       : Andreas Grundke | grundke-IT.de
 #   Datum       : 2026-03-29
 #   Lizenz      : MIT License - Copyright (c) 2026 Andreas Grundke, grundke-IT.de
@@ -22,6 +22,7 @@
 #                         entfernt Pfad; grundke-it.de/toolbox → https:// notwendig)
 #                 2.1.2 - Fix: $PSScriptRoot leer bei irm|iex → Join-Path Fehler behoben
 #                 2.1.3 - Fix: F12-Diktieren Action hatte gleichen PSScriptRoot-Fehler
+#                 2.1.4 - F12-Diktieren Action: GitHub-Download als Fallback wenn lokal nicht gefunden
 # =============================================================================
 
 #Requires -Version 5.1
@@ -223,18 +224,36 @@ foreach ($t in $catalogTools) {
     # Fuer Custom-Actions: Action-Scriptblock zur Laufzeit erzeugen
     if ($t.customAction -eq "f12-install") {
         $entry['Action'] = {
-            # Bei irm|iex ist $PSScriptRoot leer → direkt auf Fallback-Pfad
+            # Suchpfade: 1. Relativ zur Toolbox  2. GIT-Tools-Zielverzeichnis  3. Download von GitHub
             $insSource   = if ($PSScriptRoot -ne "") { [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot "..\F12-Diktieren\installer.ps1")) } else { $null }
             $insFallback = "$GIT_TOOLS_BASE\F12-Diktieren\installer.ps1"
-            $ins = if ($insSource -and (Test-Path $insSource)) { $insSource } elseif (Test-Path $insFallback) { $insFallback } else { $null }
+            $insUrl      = "https://raw.githubusercontent.com/andreasgrundke-ops/f12-diktieren/main/installer.ps1"
+
+            if ($insSource -and (Test-Path $insSource)) {
+                $ins = $insSource
+            } elseif (Test-Path $insFallback) {
+                $ins = $insFallback
+            } else {
+                # Kein lokaler Installer → von GitHub laden und in Temp ausfuehren
+                Write-Log "Installer nicht lokal gefunden – lade von GitHub..." "WARN"
+                try {
+                    $tmpIns = Join-Path $env:TEMP "f12-diktieren-installer.ps1"
+                    Invoke-WebRequest -Uri $insUrl -OutFile $tmpIns -UseBasicParsing -ErrorAction Stop
+                    $ins = $tmpIns
+                    Write-Log "Installer heruntergeladen: $tmpIns" "OK"
+                } catch {
+                    Write-Log "Download fehlgeschlagen: $_" "ERR"
+                    $ins = $null
+                }
+            }
+
             if ($ins) {
                 Write-Log "Starte F12-Diktieren Installer: $ins"
                 Start-Process powershell.exe -ArgumentList "-ExecutionPolicy Bypass -File `"$ins`"" -Wait
                 Update-WingetCache
                 Write-Log "F12-Diktieren Installer abgeschlossen." "OK"
             } else {
-                Write-Log "installer.ps1 nicht gefunden!" "ERR"
-                Write-Log "Erwartet: $insSource" "WARN"
+                Write-Log "installer.ps1 nicht gefunden und Download fehlgeschlagen!" "ERR"
             }
         }
     }
