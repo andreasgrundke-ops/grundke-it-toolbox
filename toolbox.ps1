@@ -1,6 +1,6 @@
 # =============================================================================
 #   Titel       : Grundke IT Toolbox
-#   Version     : 2.1.1
+#   Version     : 2.1.2
 #   Autor       : Andreas Grundke | grundke-IT.de
 #   Datum       : 2026-03-29
 #   Lizenz      : MIT License - Copyright (c) 2026 Andreas Grundke, grundke-IT.de
@@ -20,6 +20,7 @@
 #                         PC-Aufbereitung Kategorie (12 Tools), Copyright
 #                 2.1.1 - Kurzaufruf-URL auf HTTPS korrigiert (IONOS HTTP-Redirect
 #                         entfernt Pfad; grundke-it.de/toolbox → https:// notwendig)
+#                 2.1.2 - Fix: $PSScriptRoot leer bei irm|iex → Join-Path Fehler behoben
 # =============================================================================
 
 #Requires -Version 5.1
@@ -69,7 +70,8 @@ $FI = New-Object System.Drawing.Font("Segoe UI",  7)  # WinGet-ID klein
 $GIT_TOOLS_BASE = "C:\GIT-Tools"
 # Remote-Catalog-URL (GitHub raw) - wird automatisch geladen wenn erreichbar
 $REMOTE_CATALOG_URL = "https://raw.githubusercontent.com/andreasgrundke-ops/grundke-it-toolbox/main/catalog.json"
-$CATALOG_PATH = Join-Path $PSScriptRoot "catalog.json"
+# Wenn via "irm | iex" gestartet, ist $PSScriptRoot leer → Fallback auf Temp-Pfad
+$CATALOG_PATH = if ($PSScriptRoot -ne "") { Join-Path $PSScriptRoot "catalog.json" } else { Join-Path $env:TEMP "grundke-toolbox-catalog.json" }
 
 # ---------------------------------------------------------------------------
 # Catalog laden: 1. Remote  2. Lokale JSON  3. Interner Fallback
