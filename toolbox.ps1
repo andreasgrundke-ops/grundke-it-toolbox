@@ -1,6 +1,6 @@
 # =============================================================================
 #   Titel       : Grundke IT Toolbox
-#   Version     : 2.1.2
+#   Version     : 2.1.3
 #   Autor       : Andreas Grundke | grundke-IT.de
 #   Datum       : 2026-03-29
 #   Lizenz      : MIT License - Copyright (c) 2026 Andreas Grundke, grundke-IT.de
@@ -21,6 +21,7 @@
 #                 2.1.1 - Kurzaufruf-URL auf HTTPS korrigiert (IONOS HTTP-Redirect
 #                         entfernt Pfad; grundke-it.de/toolbox → https:// notwendig)
 #                 2.1.2 - Fix: $PSScriptRoot leer bei irm|iex → Join-Path Fehler behoben
+#                 2.1.3 - Fix: F12-Diktieren Action hatte gleichen PSScriptRoot-Fehler
 # =============================================================================
 
 #Requires -Version 5.1
@@ -222,9 +223,10 @@ foreach ($t in $catalogTools) {
     # Fuer Custom-Actions: Action-Scriptblock zur Laufzeit erzeugen
     if ($t.customAction -eq "f12-install") {
         $entry['Action'] = {
-            $insSource   = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot "..\F12-Diktieren\installer.ps1"))
+            # Bei irm|iex ist $PSScriptRoot leer → direkt auf Fallback-Pfad
+            $insSource   = if ($PSScriptRoot -ne "") { [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot "..\F12-Diktieren\installer.ps1")) } else { $null }
             $insFallback = "$GIT_TOOLS_BASE\F12-Diktieren\installer.ps1"
-            $ins = if (Test-Path $insSource) { $insSource } elseif (Test-Path $insFallback) { $insFallback } else { $null }
+            $ins = if ($insSource -and (Test-Path $insSource)) { $insSource } elseif (Test-Path $insFallback) { $insFallback } else { $null }
             if ($ins) {
                 Write-Log "Starte F12-Diktieren Installer: $ins"
                 Start-Process powershell.exe -ArgumentList "-ExecutionPolicy Bypass -File `"$ins`"" -Wait
