@@ -1,0 +1,490 @@
+{
+  "version": "2.0.0",
+  "updated": "2026-03-23",
+  "remoteUrl": "",
+  "tools": [
+    {
+      "category": "Grundke IT Tools",
+      "name": "F12-Diktieren",
+      "desc": "Lokale KI-Spracherkennung ohne Cloud. F12 halten = Aufnahme, loslassen = Text einfuegen.",
+      "wingetId": null,
+      "customAction": "f12-install",
+      "checkType": "path",
+      "checkValue": "C:\\GIT-Tools\\F12-Diktieren\\dictate_service.py"
+    },
+    {
+      "category": "Browser",
+      "name": "Google Chrome",
+      "desc": "Schneller und weitverbreiteter Webbrowser von Google.",
+      "wingetId": "Google.Chrome",
+      "checkType": "winget",
+      "checkValue": "Google.Chrome"
+    },
+    {
+      "category": "Browser",
+      "name": "Mozilla Firefox",
+      "desc": "Datenschutzfreundlicher Open-Source-Browser der Mozilla Foundation.",
+      "wingetId": "Mozilla.Firefox",
+      "checkType": "winget",
+      "checkValue": "Mozilla.Firefox"
+    },
+    {
+      "category": "Browser",
+      "name": "Brave Browser",
+      "desc": "Datenschutz-first Browser mit integriertem Werbeblocker.",
+      "wingetId": "Brave.Brave",
+      "checkType": "winget",
+      "checkValue": "Brave.Brave"
+    },
+    {
+      "category": "Kommunikation",
+      "name": "Microsoft Teams",
+      "desc": "Chat, Video-Meetings und Zusammenarbeit fuer Unternehmen.",
+      "wingetId": "Microsoft.Teams",
+      "checkType": "winget",
+      "checkValue": "Microsoft.Teams"
+    },
+    {
+      "category": "Kommunikation",
+      "name": "Zoom",
+      "desc": "Video-Konferenzen und Online-Meetings.",
+      "wingetId": "Zoom.Zoom",
+      "checkType": "winget",
+      "checkValue": "Zoom.Zoom"
+    },
+    {
+      "category": "Kommunikation",
+      "name": "Slack",
+      "desc": "Team-Messaging und Zusammenarbeit fuer Unternehmen.",
+      "wingetId": "SlackTechnologies.Slack",
+      "checkType": "winget",
+      "checkValue": "SlackTechnologies.Slack"
+    },
+    {
+      "category": "Kommunikation",
+      "name": "Signal",
+      "desc": "Sicherer End-to-End-verschluesselter Messenger.",
+      "wingetId": "OpenWhisperSystems.Signal",
+      "checkType": "winget",
+      "checkValue": "OpenWhisperSystems.Signal"
+    },
+    {
+      "category": "Kommunikation",
+      "name": "Telegram Desktop",
+      "desc": "Schneller Cloud-Messenger mit Bot-API-Unterstuetzung.",
+      "wingetId": "Telegram.TelegramDesktop",
+      "checkType": "winget",
+      "checkValue": "Telegram.TelegramDesktop"
+    },
+    {
+      "category": "Kommunikation",
+      "name": "Discord",
+      "desc": "Chat, Voice und Video fuer Communities und Teams.",
+      "wingetId": "Discord.Discord",
+      "checkType": "winget",
+      "checkValue": "Discord.Discord"
+    },
+    {
+      "category": "Entwicklung",
+      "name": "Visual Studio Code",
+      "desc": "Leichtgewichtiger Code-Editor mit Extension-Ecosystem.",
+      "wingetId": "Microsoft.VisualStudioCode",
+      "checkType": "winget",
+      "checkValue": "Microsoft.VisualStudioCode"
+    },
+    {
+      "category": "Entwicklung",
+      "name": "Git",
+      "desc": "Verteiltes Versionskontrollsystem fuer Quellcode.",
+      "wingetId": "Git.Git",
+      "checkType": "winget",
+      "checkValue": "Git.Git"
+    },
+    {
+      "category": "Entwicklung",
+      "name": "Python 3.12",
+      "desc": "Programmiersprache Python 3.12 (fuer Skripting und Automatisierung).",
+      "wingetId": "Python.Python.3.12",
+      "checkType": "winget",
+      "checkValue": "Python.Python.3.12"
+    },
+    {
+      "category": "Entwicklung",
+      "name": "Node.js LTS",
+      "desc": "JavaScript-Laufzeitumgebung fuer serverseitige Entwicklung.",
+      "wingetId": "OpenJS.NodeJS.LTS",
+      "checkType": "winget",
+      "checkValue": "OpenJS.NodeJS.LTS"
+    },
+    {
+      "category": "Entwicklung",
+      "name": "Notepad++",
+      "desc": "Erweiterter Texteditor mit Syntax-Highlighting fuer viele Sprachen.",
+      "wingetId": "Notepad++.Notepad++",
+      "checkType": "winget",
+      "checkValue": "Notepad++.Notepad++"
+    },
+    {
+      "category": "Entwicklung",
+      "name": "Windows Terminal",
+      "desc": "Modernes Terminal mit Tab-Support fuer CMD, PS und WSL.",
+      "wingetId": "Microsoft.WindowsTerminal",
+      "checkType": "winget",
+      "checkValue": "Microsoft.WindowsTerminal"
+    },
+    {
+      "category": "Entwicklung",
+      "name": "HeidiSQL",
+      "desc": "Kostenloses GUI-Tool fuer MySQL, MariaDB, PostgreSQL und SQL Server.",
+      "wingetId": "HeidiSQL.HeidiSQL",
+      "checkType": "winget",
+      "checkValue": "HeidiSQL.HeidiSQL"
+    },
+    {
+      "category": "Entwicklung",
+      "name": "DBeaver",
+      "desc": "Universelles Datenbank-Tool fuer alle gaengigen Datenbanken.",
+      "wingetId": "dbeaver.dbeaver",
+      "checkType": "winget",
+      "checkValue": "dbeaver.dbeaver"
+    },
+    {
+      "category": "Entwicklung",
+      "name": "Docker Desktop",
+      "desc": "Container-Plattform fuer lokale Entwicklung und Testing.",
+      "wingetId": "Docker.DockerDesktop",
+      "checkType": "winget",
+      "checkValue": "Docker.DockerDesktop"
+    },
+    {
+      "category": "Remote & Admin",
+      "name": "AnyDesk",
+      "desc": "Schnelles Remote-Desktop-Tool fuer Support und Fernwartung.",
+      "wingetId": "AnyDesk.AnyDesk",
+      "checkType": "winget",
+      "checkValue": "AnyDesk.AnyDesk"
+    },
+    {
+      "category": "Remote & Admin",
+      "name": "TeamViewer",
+      "desc": "Remote-Support und Fernzugriff fuer Unternehmen.",
+      "wingetId": "TeamViewer.TeamViewer",
+      "checkType": "winget",
+      "checkValue": "TeamViewer.TeamViewer"
+    },
+    {
+      "category": "Remote & Admin",
+      "name": "RustDesk",
+      "desc": "Open-Source Remote-Desktop, self-hostbar, kein Abo.",
+      "wingetId": "RustDesk.RustDesk",
+      "checkType": "winget",
+      "checkValue": "RustDesk.RustDesk"
+    },
+    {
+      "category": "Remote & Admin",
+      "name": "mRemoteNG",
+      "desc": "Multi-Protokoll-Verbindungsmanager (RDP, VNC, SSH, Telnet).",
+      "wingetId": "mRemoteNG.mRemoteNG",
+      "checkType": "winget",
+      "checkValue": "mRemoteNG.mRemoteNG"
+    },
+    {
+      "category": "Remote & Admin",
+      "name": "PuTTY",
+      "desc": "SSH- und Telnet-Client fuer Windows.",
+      "wingetId": "PuTTY.PuTTY",
+      "checkType": "winget",
+      "checkValue": "PuTTY.PuTTY"
+    },
+    {
+      "category": "Remote & Admin",
+      "name": "WinSCP",
+      "desc": "SFTP, FTP und SCP Client mit grafischer Oberflaeche.",
+      "wingetId": "WinSCP.WinSCP",
+      "checkType": "winget",
+      "checkValue": "WinSCP.WinSCP"
+    },
+    {
+      "category": "Sicherheit",
+      "name": "Bitwarden",
+      "desc": "Open-Source Passwort-Manager, self-hostbar (Vaultwarden).",
+      "wingetId": "Bitwarden.Bitwarden",
+      "checkType": "winget",
+      "checkValue": "Bitwarden.Bitwarden"
+    },
+    {
+      "category": "Sicherheit",
+      "name": "KeePass",
+      "desc": "Lokaler Open-Source Passwort-Manager ohne Cloud.",
+      "wingetId": "DominikReichl.KeePass",
+      "checkType": "winget",
+      "checkValue": "DominikReichl.KeePass"
+    },
+    {
+      "category": "Sicherheit",
+      "name": "Malwarebytes",
+      "desc": "Anti-Malware-Scanner fuer Windows (kostenlose Basisversion).",
+      "wingetId": "Malwarebytes.Malwarebytes",
+      "checkType": "winget",
+      "checkValue": "Malwarebytes.Malwarebytes"
+    },
+    {
+      "category": "Sicherheit",
+      "name": "Tor Browser",
+      "desc": "Anonymes Surfen ueber das Tor-Netzwerk. Verschluesselt und umgeht Zensur.",
+      "wingetId": "TorProject.TorBrowser",
+      "checkType": "winget",
+      "checkValue": "TorProject.TorBrowser"
+    },
+    {
+      "category": "Sicherheit",
+      "name": "Wireshark",
+      "desc": "Netzwerk-Protokollanalyse fuer Diagnose und Troubleshooting.",
+      "wingetId": "WiresharkFoundation.Wireshark",
+      "checkType": "winget",
+      "checkValue": "WiresharkFoundation.Wireshark"
+    },
+    {
+      "category": "Utilities",
+      "name": "7-Zip",
+      "desc": "Kostenloser Packmanager mit hoher Kompressionsrate.",
+      "wingetId": "7zip.7zip",
+      "checkType": "winget",
+      "checkValue": "7zip.7zip"
+    },
+    {
+      "category": "Utilities",
+      "name": "TreeSize Free",
+      "desc": "Festplattenanalyse - zeigt Speicherbelegung nach Ordner.",
+      "wingetId": "JAMSoftware.TreeSize.Free",
+      "checkType": "winget",
+      "checkValue": "JAMSoftware.TreeSize.Free"
+    },
+    {
+      "category": "Utilities",
+      "name": "Everything",
+      "desc": "Blitzschnelle Dateisuche fuer Windows (Echtzeit-Index).",
+      "wingetId": "voidtools.Everything",
+      "checkType": "winget",
+      "checkValue": "voidtools.Everything"
+    },
+    {
+      "category": "Utilities",
+      "name": "PDF24 Creator",
+      "desc": "Kostenloser PDF-Drucker und Editor (kein Abo, kein Cloud-Zwang).",
+      "wingetId": "geeksoftwareGmbH.PDF24Creator",
+      "checkType": "winget",
+      "checkValue": "geeksoftwareGmbH.PDF24Creator"
+    },
+    {
+      "category": "Utilities",
+      "name": "Greenshot",
+      "desc": "Screenshot-Tool mit Annotierungs- und Exportfunktionen.",
+      "wingetId": "Greenshot.Greenshot",
+      "checkType": "winget",
+      "checkValue": "Greenshot.Greenshot"
+    },
+    {
+      "category": "Utilities",
+      "name": "Rufus",
+      "desc": "Bootfaehige USB-Sticks erstellen (Windows, Linux, UEFI).",
+      "wingetId": "Rufus.Rufus",
+      "checkType": "winget",
+      "checkValue": "Rufus.Rufus"
+    },
+    {
+      "category": "Utilities",
+      "name": "CrystalDiskInfo",
+      "desc": "SMART-Diagnose fuer Festplatten und SSDs.",
+      "wingetId": "CrystalDewWorld.CrystalDiskInfo",
+      "checkType": "winget",
+      "checkValue": "CrystalDewWorld.CrystalDiskInfo"
+    },
+    {
+      "category": "Utilities",
+      "name": "Balena Etcher",
+      "desc": "Image-Flash-Tool fuer SD-Karten und USB-Sticks (Raspberry Pi, etc.).",
+      "wingetId": "Balena.Etcher",
+      "checkType": "winget",
+      "checkValue": "Balena.Etcher"
+    },
+    {
+      "category": "Medien",
+      "name": "VLC media player",
+      "desc": "Universeller Open-Source Mediaplayer fuer alle Formate.",
+      "wingetId": "VideoLAN.VLC",
+      "checkType": "winget",
+      "checkValue": "VideoLAN.VLC"
+    },
+    {
+      "category": "Medien",
+      "name": "Spotify",
+      "desc": "Musik-Streaming-Client fuer Windows.",
+      "wingetId": "Spotify.Spotify",
+      "checkType": "winget",
+      "checkValue": "Spotify.Spotify"
+    },
+    {
+      "category": "Medien",
+      "name": "OBS Studio",
+      "desc": "Open-Source Screen-Recording und Live-Streaming.",
+      "wingetId": "OBSProject.OBSStudio",
+      "checkType": "winget",
+      "checkValue": "OBSProject.OBSStudio"
+    },
+    {
+      "category": "Medien",
+      "name": "HandBrake",
+      "desc": "Video-Transcoder fuer alle gaengigen Formate.",
+      "wingetId": "HandBrake.HandBrake",
+      "checkType": "winget",
+      "checkValue": "HandBrake.HandBrake"
+    },
+    {
+      "category": "Medien",
+      "name": "GIMP",
+      "desc": "Professioneller Open-Source Bildbearbeitung (Photoshop-Alternative).",
+      "wingetId": "GIMP.GIMP",
+      "checkType": "winget",
+      "checkValue": "GIMP.GIMP"
+    },
+
+    {
+      "category": "Diagnose & Analyse",
+      "name": "Advanced IP Scanner",
+      "desc": "Schneller Netzwerk-Scanner: IPs, MAC-Adressen, offene Ports, RDP-Zugriff.",
+      "wingetId": "Famatech.AdvancedIPScanner",
+      "checkType": "winget",
+      "checkValue": "Famatech.AdvancedIPScanner"
+    },
+    {
+      "category": "Diagnose & Analyse",
+      "name": "HWiNFO",
+      "desc": "Detaillierte Hardware-Diagnose: CPU, GPU, RAM, Sensoren, Temperaturen.",
+      "wingetId": "REALiX.HWiNFO",
+      "checkType": "winget",
+      "checkValue": "REALiX.HWiNFO"
+    },
+    {
+      "category": "Diagnose & Analyse",
+      "name": "CPU-Z",
+      "desc": "CPU, Mainboard und RAM im Detail auslesen.",
+      "wingetId": "CPUID.CPU-Z",
+      "checkType": "winget",
+      "checkValue": "CPUID.CPU-Z"
+    },
+    {
+      "category": "Diagnose & Analyse",
+      "name": "CrystalDiskMark",
+      "desc": "SSD/HDD-Benchmark - Lese- und Schreibgeschwindigkeit messen.",
+      "wingetId": "CrystalDewWorld.CrystalDiskMark",
+      "checkType": "winget",
+      "checkValue": "CrystalDewWorld.CrystalDiskMark"
+    },
+    {
+      "category": "Diagnose & Analyse",
+      "name": "Sysinternals Suite",
+      "desc": "Microsoft Sysinternals: Process Monitor, Autoruns, TCPView und mehr (80+ Tools).",
+      "wingetId": "Microsoft.Sysinternals.Suite",
+      "checkType": "winget",
+      "checkValue": "Microsoft.Sysinternals.Suite"
+    },
+    {
+      "category": "Diagnose & Analyse",
+      "name": "Nmap / Zenmap",
+      "desc": "Netzwerk-Port-Scanner und Sicherheitsanalyse (CLI + GUI).",
+      "wingetId": "Insecure.Nmap",
+      "checkType": "winget",
+      "checkValue": "Insecure.Nmap"
+    },
+    {
+      "category": "Diagnose & Analyse",
+      "name": "WireGuard",
+      "desc": "Moderner, schneller VPN-Client (selbst hostbar auf Proxmox/LXC).",
+      "wingetId": "WireGuard.WireGuard",
+      "checkType": "winget",
+      "checkValue": "WireGuard.WireGuard"
+    },
+
+    {
+      "category": "Web & Downloads",
+      "name": "Chris Titus WinUtil",
+      "desc": "Windows 10/11 Optimierungs-Tool von Chris Titus Tech. Startet in neuem Admin-PS-Fenster.",
+      "wingetId": null,
+      "customAction": "run-ps",
+      "customData": "iwr -useb https://christitus.com/win | iex",
+      "checkType": "none",
+      "checkValue": null
+    },
+    {
+      "category": "Web & Downloads",
+      "name": "Ninite - Batch-Installer",
+      "desc": "Mehrere Programme gleichzeitig installieren, kein Adware, kein Klicken. Browser wird geoeffnet.",
+      "wingetId": null,
+      "customAction": "open-url",
+      "customData": "https://ninite.com",
+      "checkType": "none",
+      "checkValue": null
+    },
+    {
+      "category": "Web & Downloads",
+      "name": "TeamViewer Download",
+      "desc": "Direkt zur TeamViewer-Download-Seite (Windows-Client fuer Fernwartung).",
+      "wingetId": null,
+      "customAction": "open-url",
+      "customData": "https://www.teamviewer.com/de/download/portal/windows/",
+      "checkType": "none",
+      "checkValue": null
+    },
+    {
+      "category": "Web & Downloads",
+      "name": "grundke-IT.de",
+      "desc": "Grundke IT-Service - IT-Dienstleister, MSP, Cloud und Infrastruktur.",
+      "wingetId": null,
+      "customAction": "open-url",
+      "customData": "https://grundke-it.de",
+      "checkType": "none",
+      "checkValue": null
+    },
+    {
+      "category": "Web & Downloads",
+      "name": "Microsoft Sysinternals (Web)",
+      "desc": "Sysinternals direkt im Browser starten oder als ZIP laden (live.sysinternals.com).",
+      "wingetId": null,
+      "customAction": "open-url",
+      "customData": "https://learn.microsoft.com/de-de/sysinternals/",
+      "checkType": "none",
+      "checkValue": null
+    },
+    {
+      "category": "Web & Downloads",
+      "name": "Microsoft Evaluation Center",
+      "desc": "Windows Server, SQL Server und weitere Microsoft-Produkte als Testversion herunterladen.",
+      "wingetId": null,
+      "customAction": "open-url",
+      "customData": "https://www.microsoft.com/de-de/evalcenter/",
+      "checkType": "none",
+      "checkValue": null
+    },
+    {
+      "category": "Web & Downloads",
+      "name": "Heise Download",
+      "desc": "Grosse deutsche Software-Datenbank mit geprüften Downloads ohne Adware.",
+      "wingetId": null,
+      "customAction": "open-url",
+      "customData": "https://www.heise.de/download/",
+      "checkType": "none",
+      "checkValue": null
+    },
+    {
+      "category": "Web & Downloads",
+      "name": "Ventoy (USB-Boot-Tool)",
+      "desc": "Multi-ISO USB-Stick erstellen - einfach ISOs raufkopieren, fertig.",
+      "wingetId": null,
+      "customAction": "open-url",
+      "customData": "https://www.ventoy.net/en/download.html",
+      "checkType": "none",
+      "checkValue": null
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+# Grundke-IT-Toolbox - Git Ignore
+# Laufzeit / Temp
+*.log
+toggle.flag
+
+# IDE
+.vscode/
+.idea/
