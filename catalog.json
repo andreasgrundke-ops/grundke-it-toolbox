@@ -1,6 +1,6 @@
 {
-  "version": "2.0.0",
-  "updated": "2026-03-23",
+  "version": "2.2.0",
+  "updated": "2026-04-01",
   "remoteUrl": "",
   "tools": [
     {
@@ -9,6 +9,7 @@
       "desc": "Lokale KI-Spracherkennung ohne Cloud. F12 halten = Aufnahme, loslassen = Text einfuegen.",
       "wingetId": null,
       "customAction": "f12-install",
+      "customUninstall": "f12-uninstall",
       "checkType": "path",
       "checkValue": "C:\\GIT-Tools\\F12-Diktieren\\dictate_service.py"
     },
