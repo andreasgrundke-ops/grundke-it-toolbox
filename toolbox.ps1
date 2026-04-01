@@ -25,6 +25,11 @@
 #                 2.1.4 - F12-Diktieren Action: GitHub-Download als Fallback wenn lokal nicht gefunden
 #                 2.1.5 - F12-Diktieren Action: vollstaendiger GitHub-Sync nach C:\GIT-Tools\F12-Diktieren\
 #                         Struktur GIT_TOOLS_BASE\<ToolName>\ als Standard fuer alle zukuenftigen Tools
+#                 2.2.0 - Uninstall-Logik: eigene Tools (UninstallAction) vs. WinGet sauber getrennt
+#                         F12-Diktieren Deinstall: Tasks/Prozesse/Dateien korrekt entfernen
+#                         Toolbox-Selbstentfernung (Cache-Bereinigung + Schliessen)
+#                         Version-Variable, dynamische Titel/Labels
+#                         Tweak-Deinstall: sinnvolle Meldung statt WinGet-Fehler
 # =============================================================================
 
 #Requires -Version 5.1
@@ -71,7 +76,8 @@ $FI = New-Object System.Drawing.Font("Segoe UI",  7)  # WinGet-ID klein
 # ---------------------------------------------------------------------------
 # Konfiguration
 # ---------------------------------------------------------------------------
-$GIT_TOOLS_BASE = "C:\GIT-Tools"
+$TOOLBOX_VERSION = "2.2.0"
+$GIT_TOOLS_BASE  = "C:\GIT-Tools"
 # Remote-Catalog-URL (GitHub raw) - wird automatisch geladen wenn erreichbar
 $REMOTE_CATALOG_URL = "https://raw.githubusercontent.com/andreasgrundke-ops/grundke-it-toolbox/main/catalog.json"
 # Wenn via "irm | iex" gestartet, ist $PSScriptRoot leer → Fallback auf Temp-Pfad
@@ -192,19 +198,39 @@ function Uninstall-ViaPM {
     param($tool)
     $name = $tool['Name']
     $wid  = $tool['wingetId']
+
+    # 1. Eigene Tools: UninstallAction hat hoechste Prioritaet
+    $uninstAction = $tool['UninstallAction']
+    if ($uninstAction) {
+        & $uninstAction
+        return
+    }
+
+    # 2. Standard WinGet-Deinstallation
     if ($wid) {
         Write-Log "Deinstalliere via WinGet: $name ($wid) ..."
         $out = & winget uninstall --id $wid --silent --accept-source-agreements 2>&1
         $out | ForEach-Object { Write-Log "  $_" }
-        if ($LASTEXITCODE -eq 0) {
-            Write-Log "$name erfolgreich deinstalliert." "OK"
-        } else {
-            Write-Log "$name - WinGet Exitcode: $LASTEXITCODE" "WARN"
-        }
+        if ($LASTEXITCODE -eq 0) { Write-Log "$name erfolgreich deinstalliert." "OK" }
+        else { Write-Log "$name - WinGet Exitcode: $LASTEXITCODE" "WARN" }
         Update-WingetCache
         return
     }
-    Write-Log "Deinstallation nur via WinGet moeglich. Kein WinGet-ID fuer: $name" "WARN"
+
+    # 3. Tweak-Tools: sind Registry/System-Einstellungen, kein klassisches Deinstall
+    if ($tool['checkType'] -eq 'tweak') {
+        Write-Log "[$name] ist ein System-Tweak (Registry/Einstellung)." "WARN"
+        Write-Log "  Tweaks muessen manuell zurueckgesetzt werden." "WARN"
+        return
+    }
+
+    # 4. Web/URL-Tools: nichts zu deinstallieren
+    if ($tool['checkType'] -eq 'none') {
+        Write-Log "[$name] ist ein Web-Link - nichts zu deinstallieren." "INFO"
+        return
+    }
+
+    Write-Log "Kein Deinstallations-Mechanismus fuer: $name" "WARN"
 }
 
 # ---------------------------------------------------------------------------
@@ -214,14 +240,15 @@ $TOOLS = @()
 
 foreach ($t in $catalogTools) {
     $entry = @{
-        Category     = $t.category
-        Name         = $t.name
-        Desc         = $t.desc
-        wingetId     = $t.wingetId
-        checkType    = $t.checkType
-        checkValue   = $t.checkValue
-        customAction = $t.customAction
-        customData   = $t.customData   # URL oder PS-Befehl fuer open-url / run-ps
+        Category        = $t.category
+        Name            = $t.name
+        Desc            = $t.desc
+        wingetId        = $t.wingetId
+        checkType       = $t.checkType
+        checkValue      = $t.checkValue
+        customAction    = $t.customAction
+        customUninstall = $t.customUninstall  # Deinstall-Typ fuer eigene Tools
+        customData      = $t.customData       # URL oder PS-Befehl fuer open-url / run-ps
     }
     # Fuer Custom-Actions: Action-Scriptblock zur Laufzeit erzeugen
     if ($t.customAction -eq "f12-install") {
@@ -277,6 +304,86 @@ foreach ($t in $catalogTools) {
             Write-Log "F12-Diktieren Setup abgeschlossen." "OK"
         }
     }
+    # -----------------------------------------------------------------------
+    # Deinstall-Scriptblock fuer F12-Diktieren
+    # Entfernt: Scheduled Tasks, Prozesse, Startup-Verknuepfung, Dateien
+    # Optional: venv + Whisper-Modelle behalten (gross, ca. 1-3 GB)
+    # -----------------------------------------------------------------------
+    if ($t.customUninstall -eq "f12-uninstall") {
+        $entry['UninstallAction'] = {
+            $toolDir     = "$GIT_TOOLS_BASE\F12-Diktieren"
+            $TASK_FOLDER = "Grundke-IT"
+            $TASK_PYTHON = "F12-Diktieren-Python"
+            $TASK_AHK    = "F12-Diktieren-AHK"
+
+            # 1. Laufende Prozesse beenden
+            Write-Log "Stoppe F12-Diktieren Prozesse..."
+            Get-Process -Name "pythonw","python" -EA SilentlyContinue |
+                Where-Object { try { (Get-WmiObject Win32_Process -Filter "ProcessId=$($_.Id)").CommandLine -like "*dictate_service*" } catch { $false } } |
+                Stop-Process -Force -EA SilentlyContinue
+            Get-Process -Name "AutoHotkey*" -EA SilentlyContinue |
+                Stop-Process -Force -EA SilentlyContinue
+            Write-Log "Prozesse beendet." "OK"
+
+            # 2. Scheduled Tasks entfernen (Aufgabenplanung Grundke-IT)
+            Write-Log "Entferne Scheduled Tasks..."
+            try {
+                $svc = New-Object -ComObject Schedule.Service; $svc.Connect()
+                $f   = $svc.GetFolder("\$TASK_FOLDER")
+                foreach ($tn in @($TASK_PYTHON, $TASK_AHK)) {
+                    try { $f.DeleteTask($tn, 0); Write-Log "  Task entfernt: $tn" "OK" }
+                    catch { Write-Log "  Task nicht gefunden: $tn" "WARN" }
+                }
+                # Task-Ordner entfernen wenn leer
+                try {
+                    if ($f.GetTasks(0).Count -eq 0) {
+                        $svc.GetFolder("\").DeleteFolder($TASK_FOLDER, 0)
+                        Write-Log "  Task-Ordner '$TASK_FOLDER' entfernt." "OK"
+                    }
+                } catch {}
+            } catch { Write-Log "Tasks konnten nicht entfernt werden: $_" "WARN" }
+
+            # 3. Autostart-Verknuepfung entfernen (falls per Shortcut konfiguriert)
+            $startupLnk = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\F12-Diktieren.lnk"
+            if (Test-Path $startupLnk) {
+                Remove-Item $startupLnk -Force -EA SilentlyContinue
+                Write-Log "Startup-Verknuepfung entfernt." "OK"
+            }
+
+            # 4. Dateien entfernen (Option: venv + Modelle behalten)
+            if (Test-Path $toolDir) {
+                $dlg = [System.Windows.Forms.MessageBox]::Show(
+                    "Sollen venv und Whisper-Modelle (ca. 1-3 GB) ebenfalls geloescht werden?`n`n" +
+                    "[Ja]   = alles loeschen (vollstaendige Entfernung)`n" +
+                    "[Nein] = nur Scripts entfernen, Modelle + venv behalten`n`n" +
+                    "Tipp: Nein waehlen wenn du spaeter re-installieren willst (spart Download-Zeit).",
+                    "F12-Diktieren - Dateien entfernen?",
+                    [System.Windows.Forms.MessageBoxButtons]::YesNo,
+                    [System.Windows.Forms.MessageBoxIcon]::Question)
+
+                if ($dlg -eq [System.Windows.Forms.DialogResult]::Yes) {
+                    Remove-Item $toolDir -Recurse -Force -EA SilentlyContinue
+                    Write-Log "Ordner vollstaendig entfernt: $toolDir" "OK"
+                } else {
+                    # Nur Script-Dateien loeschen, venv + models behalten
+                    $scriptsToRemove = @(
+                        "dictate_service.py","F12_Diktieren.ahk","start_diktieren.bat",
+                        "installer.ps1","setup.ps1","version.txt",
+                        "diktieren.log","toggle.flag","start_toolbox.bat"
+                    )
+                    foreach ($fn in $scriptsToRemove) {
+                        $fp = Join-Path $toolDir $fn
+                        if (Test-Path $fp) { Remove-Item $fp -Force -EA SilentlyContinue }
+                    }
+                    Write-Log "Scripts entfernt. venv + Modelle behalten in: $toolDir" "OK"
+                }
+            } else {
+                Write-Log "Ordner nicht gefunden: $toolDir" "WARN"
+            }
+            Write-Log "F12-Diktieren vollstaendig deinstalliert." "OK"
+        }
+    }
+
     # open-url und run-ps werden direkt in Install-ViaPM behandelt (kein Scriptblock noetig)
     $TOOLS += $entry
 }
@@ -647,13 +754,62 @@ $TOOLS += @{
     }
 }
 
+# ---------------------------------------------------------------------------
+# Grundke IT Tools: Toolbox-Verwaltung (hardcoded, nicht im Catalog)
+# ---------------------------------------------------------------------------
+$TOOLS += @{
+    Category     = "Grundke IT Tools"
+    Name         = "Toolbox entfernen"
+    Desc         = "Entfernt Toolbox-Cache und temp. Dateien. Installierte Tools bleiben unveraendert."
+    wingetId     = $null
+    checkType    = "none"
+    checkValue   = $null
+    customAction = "toolbox-remove"
+    Action       = {
+        $installed = Get-ChildItem $GIT_TOOLS_BASE -Directory -EA SilentlyContinue |
+                     ForEach-Object { $_.Name }
+        $installedList = if ($installed) { ($installed -join "`n  ") } else { "(keine)" }
+
+        $dlg = [System.Windows.Forms.MessageBox]::Show(
+            "Grundke IT Toolbox v$TOOLBOX_VERSION`n`n" +
+            "Die Toolbox laeuft direkt aus dem RAM (irm | iex).`n" +
+            "Es gibt keine persistente Systeminstallation.`n`n" +
+            "Folgendes wird bereinigt:`n" +
+            "  - Temp-Dateien der Toolbox ($env:TEMP)`n`n" +
+            "Nicht entfernt (bleiben erhalten):`n" +
+            "  $installedList`n`n" +
+            "Fortfahren und Toolbox schliessen?",
+            "Toolbox entfernen",
+            [System.Windows.Forms.MessageBoxButtons]::YesNo,
+            [System.Windows.Forms.MessageBoxIcon]::Information)
+
+        if ($dlg -ne [System.Windows.Forms.DialogResult]::Yes) { return }
+
+        # Temp-Dateien bereinigen
+        $tmpFiles = @(
+            (Join-Path $env:TEMP "grundke-toolbox-catalog.json"),
+            (Join-Path $env:TEMP "f12-diktieren-installer.ps1")
+        )
+        foreach ($f in $tmpFiles) {
+            if (Test-Path $f) {
+                Remove-Item $f -Force -EA SilentlyContinue
+                Write-Log "Entfernt: $f" "OK"
+            }
+        }
+
+        Write-Log "Toolbox-Cache bereinigt." "OK"
+        Write-Log "Erneuter Aufruf: irm https://grundke-it.de/toolbox | iex"
+        $form.Close()
+    }
+}
+
 $CATEGORIES = $TOOLS | ForEach-Object { $_['Category'] } | Sort-Object -Unique
 
 # ---------------------------------------------------------------------------
 # GUI: Hauptfenster
 # ---------------------------------------------------------------------------
 $form = New-Object System.Windows.Forms.Form
-$form.Text          = "Grundke IT Toolbox v2.0.0"
+$form.Text          = "Grundke IT Toolbox v$TOOLBOX_VERSION"
 $form.Size          = New-Object System.Drawing.Size(1100, 740)
 $form.MinimumSize   = New-Object System.Drawing.Size(800, 500)
 $form.StartPosition = "CenterScreen"
@@ -671,7 +827,7 @@ $lbTitle.Size = New-Object System.Drawing.Size(600, 36)
 $lbTitle.Location = New-Object System.Drawing.Point(0, 4); $lbTitle.TextAlign = "MiddleLeft"
 
 $lbSub = New-Object System.Windows.Forms.Label
-$lbSub.Text = "  v2.0  |  grundke-it.de  |  Catalog: wird geladen..."
+$lbSub.Text = "  v$TOOLBOX_VERSION  |  grundke-it.de  |  Catalog: wird geladen..."
 $lbSub.Font = $FS; $lbSub.ForeColor = [System.Drawing.Color]::FromArgb(180, 210, 240)
 $lbSub.AutoSize = $false; $lbSub.Size = New-Object System.Drawing.Size(800, 18)
 $lbSub.Location = New-Object System.Drawing.Point(0, 42)
@@ -1065,11 +1221,11 @@ $form.Add_Shown({
     $splitInner.SplitterDistance = 220
 
     # Catalog-Quelle im Header anzeigen
-    $lbSub.Text = "  v2.0  |  grundke-it.de  |  Catalog: $($script:CatalogSource)  |  $($TOOLS.Count) Tools"
+    $lbSub.Text = "  v$TOOLBOX_VERSION  |  grundke-it.de  |  Catalog: $($script:CatalogSource)  |  $($TOOLS.Count) Tools"
 
     Show-Category $CATEGORIES[0]
 
-    Write-Log "Grundke IT Toolbox v2.0.0 gestartet."
+    Write-Log "Grundke IT Toolbox v$TOOLBOX_VERSION gestartet."
     Write-Log "Benutzer : $([Security.Principal.WindowsIdentity]::GetCurrent().Name)"
     Write-Log "Catalog  : $($script:CatalogSource)  |  $($TOOLS.Count) Tools in $($CATEGORIES.Count) Kategorien"
     if ($script:WingetAvailable) {
